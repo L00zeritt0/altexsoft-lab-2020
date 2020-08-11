@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace MyApp.BL
+namespace MyApp.BLnew.Interfaces
 {
-    interface IDirInformer
+    interface IDirInformable
     {
-        String Path { get; set; }
         void ShowCurrentDirContent();
-        void ChoseElseDir(int i);
+        void ChooseElseDir(int i);
     }
 }

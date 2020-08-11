@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace MyApp.BL
+namespace MyApp.BLnew.Interfaces
 {
-    interface IThirdSentenceReverse
+    interface IThirdSentenceReversible
     {
         String ThirdSentenceReverse();
     }

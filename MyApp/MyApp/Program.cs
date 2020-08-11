@@ -1,7 +1,8 @@
-﻿using MyApp.BL;
-using MyApp.Manager;
+﻿
+using MyApp.BLnew.Functionality;
+using MyApp.BLnew.Interfaces;
 using System;
-using System.IO;
+
 
 namespace MyApp
 {
@@ -9,11 +10,12 @@ namespace MyApp
     {
         static void Main()
         {
+
             String path;
-            TaksManager manager = new TaksManager();
+            String word;
             while (true)
             {
-                
+
                 Console.WriteLine("\n1 --- Delete String from a text file");
                 Console.WriteLine("2 --- Show count of words and every tenth word in a text file");
                 Console.WriteLine("3 --- The third sentence method");
@@ -27,13 +29,16 @@ namespace MyApp
                             Console.WriteLine("\nEnter the path:");
                             path = Console.ReadLine();
                             Console.WriteLine("\nEnter the word or char:");
+                            word = Console.ReadLine();
                             try
                             {
-                                manager.DeleteFromTheText(path, Console.ReadLine());
+                                ITextEditable te = new TextEditer(path, word);
+                                Console.WriteLine("\n" + te.EditText());
+                                Console.WriteLine();
                             }
-                            catch (Exception)
+                            catch (Exception e)
                             {
-                                Console.WriteLine("Catch exception");
+                                Console.WriteLine(e.Message);
                             }
                             Console.ReadLine();
                             break;
@@ -44,11 +49,14 @@ namespace MyApp
                             path = Console.ReadLine();
                             try
                             {
-                                manager.EveryTenthAndCount(path);
+                                IWordsCountable wc = new WordsCounter(path);
+                                Console.WriteLine("\n" + wc.WordCounter());
+                                IEveryTenthWordTakable wt = new EveryTenthWordTaker(path);
+                                Console.WriteLine("\n" + wt.EveryTenthWord());
                             }
-                            catch (Exception)
+                            catch (Exception e)
                             {
-                                Console.WriteLine("Catch exception");
+                                Console.WriteLine(e.Message);
                             }
                             Console.ReadLine();
                             break;
@@ -59,11 +67,12 @@ namespace MyApp
                             path = Console.ReadLine();
                             try
                             {
-                                manager.TheThirdSentence(path);
+                                IThirdSentenceReversible ts = new ThirdSentenceReverser(path);
+                                Console.WriteLine("\n" + ts.ThirdSentenceReverse());
                             }
-                            catch (Exception)
+                            catch (Exception e)
                             {
-                                Console.WriteLine("Catch exception");
+                                Console.WriteLine(e.Message);
                             }
                             Console.ReadLine();
                             break;
@@ -74,11 +83,15 @@ namespace MyApp
                             path = Console.ReadLine();
                             try
                             {
-                                manager.WorkWithDir(path);
+                                IDirInformable di = new DirInformer(path);
+                                di.ShowCurrentDirContent();
+                                Console.WriteLine("\nChoose the dir:");
+                                di.ChooseElseDir(Int32.Parse(Console.ReadLine()));
+                                di.ShowCurrentDirContent();
                             }
-                            catch (Exception)
+                            catch (Exception e)
                             {
-                                Console.WriteLine("Catch exception");
+                                Console.WriteLine(e.Message);
                             }
                             Console.ReadLine();
                             break;
@@ -90,7 +103,7 @@ namespace MyApp
                         }
                 }
             }
-           
+
         }
     }
 }
