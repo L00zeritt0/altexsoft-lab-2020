@@ -10,12 +10,18 @@ namespace RecipeBook.DL
         /// <summary>
         /// Method returns list of items along the given path
         /// </summary>
-        /// <returns></returns>
-        List<T> GetAllItems();
+        /// <returns>The list of items from json file</returns>
+        IEnumerable<T> GetAllItems();
         /// <summary>
-        /// Meths saves list of items along the given path
+        /// Method adds new T item to our list and save it into json file.
         /// </summary>
-        /// <param name="list"></param>
-        void Save(List<T> list);
+        /// <param name="temp">It takes object of class which will be add to the list</param>
+        void Create(T temp);
+        /// <summary>
+        /// Method saves list of items along the given path
+        /// </summary>
+        void Save();
+
+        
     }
 }

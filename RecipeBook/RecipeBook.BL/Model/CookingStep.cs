@@ -7,15 +7,15 @@ using System.Text;
 namespace RecipeBook.BL.Model
 {
     /// <summary>
-    /// CookingStep class describe the step of cooking process
+    /// Class describes a step of cooking process
     /// </summary>
     public class CookingStep
     {
-        private String cookingStepDescription;
+        private string cookingStepDescription;
         /// <summary>
-        /// Property of cookingStepDescription. Describe the step of cooking process
+        /// Description of cooking step (with checking)
         /// </summary>
-        public String CookingStepDescription
+        public string CookingStepDescription
         {
             get
             {
@@ -25,23 +25,15 @@ namespace RecipeBook.BL.Model
             {
                 if (String.IsNullOrWhiteSpace(value))
                 {
-                    throw new ArgumentNullException("Cooking step can't be empty.");
+                    throw new ArgumentException("Cooking step can't be empty.");
                 }
                 cookingStepDescription = value;
             }
         }
-        /// <summary>
-        /// Cooking step constructor
-        /// </summary>
-        /// <param name="description"></param>
         public CookingStep() { }
-        public CookingStep(String description)
-        {
-            CookingStepDescription = description;
-        }
         public override string ToString()
         {
-            return CookingStepDescription;
+            return cookingStepDescription;
         }
     }
 }

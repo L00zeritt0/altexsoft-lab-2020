@@ -5,47 +5,37 @@ using System.Text;
 namespace RecipeBook.BL.Model
 {
     /// <summary>
-    /// Class describe the ingredient of a recipe
+    /// Class describes the ingredient of a recipe
     /// </summary>
     public class RecipeIngredient
     {
-        private int weightOfFoodProduct;
+        private string quantityOfFoodProduct;
         /// <summary>
-        /// FoodProduct object
+        /// Food product of our recipe ingredient
         /// </summary>
         public FoodProduct FoodProduct { get; set; }
         /// <summary>
-        /// Weight of our recipe ingredient
+        /// Quantitey of our recipe ingredient
         /// </summary>
-        public int WeightOfFoodProduct 
+        public string QuantityOfFoodProduct 
         {
             get 
             {
-                return weightOfFoodProduct;
+                return quantityOfFoodProduct;
             } 
             set 
-            { 
-                if (value < 1)
+            {
+                if (String.IsNullOrWhiteSpace(value))
                 {
-                    throw new ArgumentException("Weight of ingredient have to be greater than zero.");
+                    throw new ArgumentException("Quantity of a recipe ingredient can't be empty.");
                 }
-                weightOfFoodProduct = value;
+                quantityOfFoodProduct = value;
             } 
         }
-        /// <summary>
-        /// Constructor of RecipeIngredient class
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="weight"></param>
         public RecipeIngredient() { }
-        public RecipeIngredient(String name, int weight)
-        {
-            FoodProduct = new FoodProduct(name);
-            WeightOfFoodProduct = weight;
-        }
         public override string ToString()
         {
-            return $"{FoodProduct} ({WeightOfFoodProduct} gm)";
+            return $"{FoodProduct} ({QuantityOfFoodProduct})";
         }
     }
 }

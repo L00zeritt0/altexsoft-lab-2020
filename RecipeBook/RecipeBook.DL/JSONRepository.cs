@@ -1,54 +1,60 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.Json;
 
 namespace RecipeBook.DL
 {
 
-    public class JSONRepository<T>: IRepository<T>
+    public class JsonRepository<T>: IRepository<T>
     {
         /// <summary>
         /// Field path contains the path to our local file
         /// </summary>
-        private String path;
-        public String Path
+        private string path;
+        protected List<T> listOfItems;
+        public JsonRepository(string path)
         {
-            get
+            if (!File.Exists(path))
             {
-                return path;
+                throw new FileNotFoundException("The path is empty or wrong.");
             }
-            set
-            {
-                if (!File.Exists(value))
-                {
-                    throw new ArgumentNullException("The path is empty or wrong.");
-                }
-                path = value;
-            }
-        }
+            this.path = path;
 
-        public JSONRepository(String path)
-        {
-            Path = path;
+            listOfItems = (List<T>)GetAllItems();
+            if (listOfItems == null)
+            {
+                listOfItems = new List<T>();
+            }
         }
         /// <summary>
         /// Method returns list of items along the given path
         /// </summary>
-        /// <returns></returns>
-        public List<T> GetAllItems()
-        {
-            return JsonSerializer.Deserialize<List<T>>(File.ReadAllText(Path));
+        /// <returns>The list of items from json file</returns>
+        public IEnumerable<T> GetAllItems()
+        { 
+            return JsonSerializer.Deserialize<IEnumerable<T>>(File.ReadAllText(path));
         }
         /// <summary>
-        /// Meths saves list of items along the given path
+        /// Method adds new T item to our list and save it into json file.
         /// </summary>
-        /// <param name="list"></param>
-        public void Save(List<T> list)
+        /// <param name="item">It takes object of class which will be add to the list</param>
+        public void Create(T item)
         {
-            File.WriteAllText(Path, JsonSerializer.Serialize<List<T>>(list));
+            listOfItems.Add(item);
+            Save();
         }
+        /// <summary>
+        /// Method saves list of items along the given path
+        /// </summary>
+        public void Save()
+        {
+            File.WriteAllText(path, JsonSerializer.Serialize(listOfItems));
+        }
+      
+        
     }
     
 }

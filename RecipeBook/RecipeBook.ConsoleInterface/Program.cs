@@ -4,6 +4,8 @@ using RecipeBook.BL.Controller;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq.Expressions;
+using RecipeBook.DL;
+using System.Runtime.CompilerServices;
 
 namespace RecipeBook.ConsoleInterface
 {
@@ -11,19 +13,29 @@ namespace RecipeBook.ConsoleInterface
     {
         static void Main()
         {
-            //Paths to our files
-            String pathRecipes = @"C:\Users\L00zeritt0\Desktop\AltexSoft\altexsoft-lab-2020\RecipeBook\recipes.json";
-            String pathFoods = @"C:\Users\L00zeritt0\Desktop\AltexSoft\altexsoft-lab-2020\RecipeBook\foods.json";
-            String pathCategories = @"C:\Users\L00zeritt0\Desktop\AltexSoft\altexsoft-lab-2020\RecipeBook\categories.json";
-            //Temporary variables
-            String temp;
+            #region Paths to my files
+            string pathRecipes = @"C:\Users\L00zeritt0\Desktop\AltexSoft\altexsoft-lab-2020\RecipeBook\recipes.json";
+            string pathFoods = @"C:\Users\L00zeritt0\Desktop\AltexSoft\altexsoft-lab-2020\RecipeBook\foods.json";
+            string pathCategories = @"C:\Users\L00zeritt0\Desktop\AltexSoft\altexsoft-lab-2020\RecipeBook\categories.json";
+            #endregion
+
+            #region Temporary variables
+            string temp;
             int result;
             int category;
+            #endregion
 
             Manager manager;
-            //if something wrong with our files
+            
+            #region if something wrong with our json files
             while (true)
             {
+                //Console.WriteLine("\nEnter the path to file of list of recipes:");
+                //string pathRecipes = Console.ReadLine();
+                //Console.WriteLine("\nEnter the path to file of list of food product:");
+                //string pathFoods = Console.ReadLine();
+                //Console.WriteLine("\nEnter the path to file of list of categories:");
+                //string pathCategories = Console.ReadLine();
                 try
                 {
                     manager = new Manager(pathRecipes, pathFoods, pathCategories);
@@ -35,10 +47,12 @@ namespace RecipeBook.ConsoleInterface
                 }
                 Console.ReadLine();
             }
-
+            #endregion
+            
             while (true)
-            {   
-                // Show categories and choose one of them. 
+            {
+                #region Show categories and choose one of them. 
+
                 while (true)
                 {
                     Console.Clear();
@@ -50,20 +64,22 @@ namespace RecipeBook.ConsoleInterface
                     if (temp.Equals("a"))
                     {
                         Console.Clear();
-                        manager.RecipeAdder();
+                        manager.AddRecipe();
                         continue;
                     }
-                    else if (!Int32.TryParse(temp, out category))
+                    else if (!int.TryParse(temp, out category))
                     {
                         continue;
                     }
-                    else if (category <= 0 || category > manager.categoryController.ListOfCatigories.Count)
+                    else if (category <= 0 || category > manager.categoryController.GetAllItems().Count)
                     {
                         continue;
                     }
                     break;
                 }
-                //Show recipes of category and choose one of them or go back to out categories
+                #endregion
+
+                #region Show recipes of category. Menu: choose one of them or go back to our categories
                 while (true)
                 {
                     Console.Clear();
@@ -79,10 +95,10 @@ namespace RecipeBook.ConsoleInterface
                     else if (temp.Equals("a"))
                     {
                         Console.Clear();
-                        manager.RecipeAdder();
+                        manager.AddRecipe();
                         break;
                     }
-                    else if (!Int32.TryParse(temp, out result))
+                    else if (!int.TryParse(temp, out result))
                     {
                         continue;
                     }
@@ -97,7 +113,8 @@ namespace RecipeBook.ConsoleInterface
                         Console.WriteLine("\nPress ENTER to go back!");
                         Console.ReadLine();
                     }
-                } 
+                }  
+                #endregion
             }
         }
     }
