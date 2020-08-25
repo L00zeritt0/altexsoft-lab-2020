@@ -14,9 +14,9 @@ namespace RecipeBook.ConsoleInterface
         static void Main()
         {
             #region Paths to my files
-            string pathRecipes = @"C:\Users\L00zeritt0\Desktop\AltexSoft\altexsoft-lab-2020\RecipeBook\recipes.json";
-            string pathFoods = @"C:\Users\L00zeritt0\Desktop\AltexSoft\altexsoft-lab-2020\RecipeBook\foods.json";
-            string pathCategories = @"C:\Users\L00zeritt0\Desktop\AltexSoft\altexsoft-lab-2020\RecipeBook\categories.json";
+            //string pathRecipes = @"C:\Users\L00zeritt0\Desktop\AltexSoft\altexsoft-lab-2020\RecipeBook\recipes.json";
+            //string pathFoods = @"C:\Users\L00zeritt0\Desktop\AltexSoft\altexsoft-lab-2020\RecipeBook\foods.json";
+            //string pathCategories = @"C:\Users\L00zeritt0\Desktop\AltexSoft\altexsoft-lab-2020\RecipeBook\categories.json";
             #endregion
 
             #region Temporary variables
@@ -27,15 +27,15 @@ namespace RecipeBook.ConsoleInterface
 
             Manager manager;
             
-            #region if something wrong with our json files
+            #region Entering of paths to out files and checking of them.
             while (true)
             {
-                //Console.WriteLine("\nEnter the path to file of list of recipes:");
-                //string pathRecipes = Console.ReadLine();
-                //Console.WriteLine("\nEnter the path to file of list of food product:");
-                //string pathFoods = Console.ReadLine();
-                //Console.WriteLine("\nEnter the path to file of list of categories:");
-                //string pathCategories = Console.ReadLine();
+                Console.WriteLine("\nEnter the path to file of list of recipes:");
+                string pathRecipes = Console.ReadLine();
+                Console.WriteLine("\nEnter the path to file of list of food product:");
+                string pathFoods = Console.ReadLine();
+                Console.WriteLine("\nEnter the path to file of list of categories:");
+                string pathCategories = Console.ReadLine();
                 try
                 {
                     manager = new Manager(pathRecipes, pathFoods, pathCategories);

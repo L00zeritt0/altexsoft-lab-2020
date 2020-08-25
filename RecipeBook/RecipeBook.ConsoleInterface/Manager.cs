@@ -9,11 +9,17 @@ using System.Resources;
 using System.Text;
 using System.Collections;
 using System.Linq.Expressions;
+using System.Xml.Serialization;
 
 namespace RecipeBook.ConsoleInterface
 {
     class Manager
     {
+        public ResourceManager addCategoryStrings = new ResourceManager("RecipeBook.ConsoleInterface.AddCategoryStrings", typeof(Manager).Assembly);
+        public ResourceManager addIngredientStrings = new ResourceManager("RecipeBook.ConsoleInterface.AddIngredientStrings", typeof(Manager).Assembly);
+        public ResourceManager addStepStrings = new ResourceManager("RecipeBook.ConsoleInterface.AddStepStrings", typeof(Manager).Assembly);
+        
+        private int flag = 0;
         /// <summary>
         /// Temporary variables
         /// </summary>
@@ -21,6 +27,9 @@ namespace RecipeBook.ConsoleInterface
         private string temp;
         private string categoryName;
         public List<Recipe> recipeListOfCategory;
+        private List<FoodProduct> foodProductList;
+        private List<RecipeIngredient> ingredients;
+        private List<CookingStep> steps;
         /// <summary>
         /// Our controllers
         /// </summary>
@@ -73,22 +82,24 @@ namespace RecipeBook.ConsoleInterface
             FoodProduct foodProduct = new FoodProduct();
             foodProduct.Name = Console.ReadLine();
             foodProductController.AddItem(foodProduct);
+            foodProductList.Add(foodProduct);
         }
         /// <summary>
         /// Method collect an information about our recipe and adds it into our recipe list
         /// </summary>
         public void AddRecipe()
         {
-            List<RecipeIngredient> ingredients = new List<RecipeIngredient>();
-            List<CookingStep> steps = new List<CookingStep>();
+            foodProductList = foodProductController.GetAllItems();
+            ingredients = new List<RecipeIngredient>();
+            steps = new List<CookingStep>();
             Recipe recipe = new Recipe();
 
             Console.WriteLine("Enter the name of recipe:");
             string recipeName = Console.ReadLine();
 
             EnterRecipeCategory();
-            EnterRecipeIngredients(ingredients);
-            EnterRecipeSteps(steps);
+            EnterRecipeIngredients();
+            EnterRecipeSteps();
             try
             {
                 recipe.RecipeName = recipeName;
@@ -114,86 +125,23 @@ namespace RecipeBook.ConsoleInterface
         /// </summary>
         private void EnterRecipeCategory()
         {
-            while (true)
-            {
-                Console.WriteLine("\nCategories:");
-                ShowCategoryList();
-                Console.WriteLine("\nChoose the number of category");
-                temp = Console.ReadLine();
-                if (int.TryParse(temp, out result))
-                {
-                    if (result > 0 || result <= categoryController.GetAllItems().Count)
-                    {
-                        categoryName = categoryController.GetAllItems()[result - 1].CategoryName;
-                        break;
-                    }
-                }
-            }
+            CommonMethodOfMenu(categoryController.GetAllItems(), null, null, ChooseCategory, addCategoryStrings);
         }
         /// <summary>
         /// Method gets and check list of ingredients. It contains a small menu too.
         /// </summary>
         /// <param name="ingredients">list of ingredients of new recipe</param>
-        private void EnterRecipeIngredients(List<RecipeIngredient> ingredients)
+        private void EnterRecipeIngredients()
         {
-            while (true)
-            {
-                Console.Clear();
-                Console.WriteLine("\nList of products:");
-                ShowList<FoodProduct>(foodProductController.GetAllItems());
-                Console.WriteLine("\nChoose the number of product or press:" +
-                    "\n q - to go to input of steps;" +
-                    "\n a - to add a new product;");
-
-                temp = Console.ReadLine();
-                if (temp.Equals("q"))
-                {
-                    break;
-                }
-                else if (temp.Equals("a"))
-                {
-                    AddFoodProduct();
-                    continue;
-                }
-                else if (int.TryParse(temp, out result))
-                {
-                    if (result > 0 || result <= foodProductController.GetAllItems().Count)
-                    {
-                        temp = foodProductController.GetAllItems()[result - 1].Name;
-
-                        Console.WriteLine($"\nEnter the quantity of product {temp} and its measure:");
-                        FoodProduct foodProduct = new FoodProduct();
-                        foodProduct.Name = temp;
-                        RecipeIngredient recipeIngredient = new RecipeIngredient();
-                        recipeIngredient.FoodProduct = foodProduct;
-                        recipeIngredient.QuantityOfFoodProduct = Console.ReadLine();
-                        ingredients.Add(recipeIngredient);
-                    }
-                }
-            }
+            CommonMethodOfMenu(foodProductList, Break, AddFoodProduct, AddIngredientToList, addIngredientStrings);
         }
         /// <summary>
         /// Method gets and checks list of steps. It contains a small menu too.
         /// </summary>
         /// <param name="steps">The lis of steps of new recipe</param>
-        private void EnterRecipeSteps(List<CookingStep> steps)
+        private void EnterRecipeSteps()
         {
-            while (true)
-            {
-                Console.Clear();
-                Console.WriteLine("\nCooking steps:");
-                ShowList<CookingStep>(steps);
-                Console.WriteLine("\nEnter the step of cooking or press:" +
-                    "\n q - to finish recipe adding;");
-                temp = Console.ReadLine();
-                if (temp.Equals("q"))
-                {
-                    break;
-                }
-                CookingStep cookingStep = new CookingStep();
-                cookingStep.CookingStepDescription = temp;
-                steps.Add(cookingStep);
-            }
+            CommonMethodOfMenu(steps, Break, null, AddStepToList, addStepStrings);
         }
         /// <summary>
         /// Method show all items of some list
@@ -206,6 +154,91 @@ namespace RecipeBook.ConsoleInterface
             {
                 Console.WriteLine($"   {i + 1}.   {list[i]}");
             }
+        }
+        /// <summary>
+        /// Common method of menu
+        /// </summary>
+        /// <typeparam name="T">Type of input list</typeparam>
+        /// <param name="list">List of Categories, or food products, or steps of cooking</param>
+        /// <param name="pressQ">If press q delegate parameter</param>
+        /// <param name="pressA">If press a delegate parameter</param>
+        /// <param name="finalStep">Final step of common metod. Delegate parameter</param>
+        /// <param name="rm">Recource file</param>
+        private void CommonMethodOfMenu<T>(List<T> list, Action pressQ, Action pressA, Action finalStep, ResourceManager rm)
+        {
+            while (flag != 1)
+            {
+                Console.Clear();
+                Console.WriteLine(rm.GetString("List"));
+                ShowList(list);
+                Console.WriteLine(rm.GetString("Instruction"));
+            
+                temp = Console.ReadLine();
+                switch (temp)
+                {
+                    case "q":
+                        pressQ?.Invoke();
+                        break;
+                    case "a":
+                        pressA?.Invoke();
+                        break;
+                    default:
+                        finalStep();
+                        break;
+                }
+            }
+            flag = 0;
+        }
+        /// <summary>
+        /// Method sets flag
+        /// </summary>
+        private void Break()
+        {
+            flag = 1;
+        }
+        /// <summary>
+        /// Method adds new ingredient to the list of ingredients in CommonMethodOfMenu
+        /// </summary>
+        private void AddIngredientToList()
+        {
+            if (int.TryParse(temp, out result))
+            {
+                if (result > 0 || result <= foodProductController.GetAllItems().Count)
+                {
+                    temp = foodProductController.GetAllItems()[result - 1].Name;
+                    Console.WriteLine($"\nEnter the quantity of product {temp} and its measure:");
+                    FoodProduct foodProduct = new FoodProduct();
+                    foodProduct.Name = temp;
+                    RecipeIngredient recipeIngredient = new RecipeIngredient();
+                    recipeIngredient.FoodProduct = foodProduct;
+                    recipeIngredient.QuantityOfFoodProduct = Console.ReadLine();
+                    ingredients.Add(recipeIngredient);
+                }
+            }
+            
+        }
+        /// <summary>
+        /// Method chooses the category from category list
+        /// </summary>
+        private void ChooseCategory()
+        {
+            if (int.TryParse(temp, out result))
+            {
+                if (result > 0 || result <= categoryController.GetAllItems().Count)
+                {
+                    categoryName = categoryController.GetAllItems()[result - 1].CategoryName;
+                    flag = 1;
+                }
+            }
+        }
+        /// <summary>
+        /// Method adds new step to the list of steps in CommonMethodOfMenu
+        /// </summary>
+        private void AddStepToList()
+        {
+            CookingStep cookingStep = new CookingStep();
+            cookingStep.CookingStepDescription = temp;
+            steps.Add(cookingStep);
         }
     }
 }
