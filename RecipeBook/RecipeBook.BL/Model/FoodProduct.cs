@@ -5,13 +5,13 @@ using System.Text;
 namespace RecipeBook.BL.Model
 {
     /// <summary>
-    /// class describes a food product
+    /// Class describes a food product
     /// </summary>
     public class FoodProduct
     {
         private string name;
         /// <summary>
-        /// name of food product (with checking)
+        /// Preperty Name contains a name of food product (with checking)
         /// </summary>
         public string Name
         {
@@ -21,14 +21,13 @@ namespace RecipeBook.BL.Model
             }
             set
             {
-                if (String.IsNullOrWhiteSpace(value))
+                if (string.IsNullOrWhiteSpace(value))
                 {
                     throw new ArgumentException("Name of food product can't be empty. Please, chech it");
                 }
                 name = value;
             }
         }
-        public FoodProduct() { }
         public override string ToString()
         {
             return name;

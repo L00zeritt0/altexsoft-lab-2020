@@ -11,29 +11,28 @@ namespace RecipeBook.BL.Model
     /// </summary>
     public class CookingStep
     {
-        private string cookingStepDescription;
+        private string description;
         /// <summary>
-        /// Description of cooking step (with checking)
+        /// Prorepry CookigStepDescription contains descriprion of cooking step (with checking)
         /// </summary>
-        public string CookingStepDescription
+        public string Description
         {
             get
             {
-                return cookingStepDescription;
+                return description;
             }
             set
             {
-                if (String.IsNullOrWhiteSpace(value))
+                if (string.IsNullOrWhiteSpace(value))
                 {
                     throw new ArgumentException("Cooking step can't be empty.");
                 }
-                cookingStepDescription = value;
+                description = value;
             }
         }
-        public CookingStep() { }
         public override string ToString()
         {
-            return cookingStepDescription;
+            return description;
         }
     }
 }

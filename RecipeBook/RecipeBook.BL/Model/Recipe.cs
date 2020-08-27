@@ -9,41 +9,41 @@ namespace RecipeBook.BL.Model
     /// </summary>
     public class Recipe
     {
-        private string recipeName;
+        private string name;
         /// <summary>
         /// Name of a current recipe (with checking).
         /// </summary>
-        public string RecipeName 
+        public string Name 
         {
             get
             {
-                return recipeName;
+                return name;
             }
             set
             {
-                if (String.IsNullOrWhiteSpace(value))
+                if (string.IsNullOrWhiteSpace(value))
                 {
                     throw new ArgumentException("Recipe name can't be empty.");
                 }
-                recipeName = value;
+                name = value;
             }
         }
         /// <summary>
         /// Category of a recipe
         /// </summary>
-        public RecipeBookCategory RecipeCategory { get; set; }
+        public RecipeBookCategory Category { get; set; }
         /// <summary>
         /// Current recipe ingredients list.
         /// </summary>
-        public List<RecipeIngredient> RecipeIngredients { get; set; }
+        public List<RecipeIngredient> Ingredients { get; set; }
         /// <summary>
         /// Cooking step list of a recipe
         /// </summary>
-        public List<CookingStep> RecipeSteps { get; set; }
-        public Recipe() { }
+        public List<CookingStep> Steps { get; set; }
+
         public override string ToString()
         {
-            return RecipeName;
+            return Name;
         }
     }
 }

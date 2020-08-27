@@ -10,7 +10,7 @@ namespace RecipeBook.BL.Controller
         /// <summary>
         /// Field connect us with our data layer
         /// </summary>
-        private IRepository<T> data;
+        private readonly IRepository<T> data;
         public Controller(string path)
         {
             data = new JsonRepository<T>(path);
@@ -19,9 +19,9 @@ namespace RecipeBook.BL.Controller
         /// Get the list of items from repository
         /// </summary>
         /// <returns>The list of items is class T</returns>
-        public List<T> GetAllItems()
+        public IEnumerable<T> GetAllItems()
         {
-            var list = (List<T>)data.GetAllItems();
+            var list = data.GetAllItems();
             if (list == null)
             {
                 return new List<T>();

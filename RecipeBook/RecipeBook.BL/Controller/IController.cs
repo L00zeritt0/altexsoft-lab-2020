@@ -10,7 +10,7 @@ namespace RecipeBook.BL.Controller
         /// Get the list of items from repository
         /// </summary>
         /// <returns>The list of items is class T</returns>
-        List<T> GetAllItems();
+        IEnumerable<T> GetAllItems();
         /// <summary>
         /// Method add new item of class T in our list of items
         /// </summary>

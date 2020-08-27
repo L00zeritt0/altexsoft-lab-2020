@@ -20,7 +20,8 @@ namespace RecipeBook.DL
         /// <summary>
         /// Method saves list of items along the given path
         /// </summary>
-        void Save();
+        /// <param name="list">The list of items we should to write to *.json</param>
+        void Save(IEnumerable<T> list);
 
         
     }

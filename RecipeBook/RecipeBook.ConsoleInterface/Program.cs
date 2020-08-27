@@ -6,6 +6,7 @@ using System.Dynamic;
 using System.Linq.Expressions;
 using RecipeBook.DL;
 using System.Runtime.CompilerServices;
+using System.Linq;
 
 namespace RecipeBook.ConsoleInterface
 {
@@ -13,10 +14,10 @@ namespace RecipeBook.ConsoleInterface
     {
         static void Main()
         {
-            #region Paths to my files
-            //string pathRecipes = @"C:\Users\L00zeritt0\Desktop\AltexSoft\altexsoft-lab-2020\RecipeBook\recipes.json";
-            //string pathFoods = @"C:\Users\L00zeritt0\Desktop\AltexSoft\altexsoft-lab-2020\RecipeBook\foods.json";
-            //string pathCategories = @"C:\Users\L00zeritt0\Desktop\AltexSoft\altexsoft-lab-2020\RecipeBook\categories.json";
+            #region Paths to json files
+            string pathRecipes = AppDomain.CurrentDomain.BaseDirectory + "recipes.json";
+            string pathFoods = AppDomain.CurrentDomain.BaseDirectory + "foods.json";
+            string pathCategories = AppDomain.CurrentDomain.BaseDirectory + "categories.json";
             #endregion
 
             #region Temporary variables
@@ -26,29 +27,21 @@ namespace RecipeBook.ConsoleInterface
             #endregion
 
             Manager manager;
-            
-            #region Entering of paths to out files and checking of them.
-            while (true)
+
+            #region Create object Manager and make an exception handling.
+            try
             {
-                Console.WriteLine("\nEnter the path to file of list of recipes:");
-                string pathRecipes = Console.ReadLine();
-                Console.WriteLine("\nEnter the path to file of list of food product:");
-                string pathFoods = Console.ReadLine();
-                Console.WriteLine("\nEnter the path to file of list of categories:");
-                string pathCategories = Console.ReadLine();
-                try
-                {
-                    manager = new Manager(pathRecipes, pathFoods, pathCategories);
-                    break;
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.Message);
-                }
+                manager = new Manager(pathRecipes, pathFoods, pathCategories);
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
                 Console.ReadLine();
+                return;
             }
             #endregion
-            
+
             while (true)
             {
                 #region Show categories and choose one of them. 
@@ -71,7 +64,7 @@ namespace RecipeBook.ConsoleInterface
                     {
                         continue;
                     }
-                    else if (category <= 0 || category > manager.categoryController.GetAllItems().Count)
+                    else if (category <= 0 && category > manager.categories.Count)
                     {
                         continue;
                     }
@@ -83,7 +76,7 @@ namespace RecipeBook.ConsoleInterface
                 while (true)
                 {
                     Console.Clear();
-                    manager.ShowRecipeList(category);
+                    manager.ShowRecipeList(manager.categories[category - 1].Name);
                     Console.WriteLine("\nChoose the number of recipe or press;" +
                         "\n q - go back;" +
                         "\n a - add new recipe;\n");
@@ -102,7 +95,7 @@ namespace RecipeBook.ConsoleInterface
                     {
                         continue;
                     }
-                    else if (result <= 0 || result > manager.recipeListOfCategory.Count)
+                    else if (result <= 0 && result > manager.recipeListOfCategory.Count)
                     {
                         continue;
                     }
@@ -113,7 +106,7 @@ namespace RecipeBook.ConsoleInterface
                         Console.WriteLine("\nPress ENTER to go back!");
                         Console.ReadLine();
                     }
-                }  
+                }
                 #endregion
             }
         }

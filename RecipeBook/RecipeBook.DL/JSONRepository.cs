@@ -14,7 +14,6 @@ namespace RecipeBook.DL
         /// Field path contains the path to our local file
         /// </summary>
         private string path;
-        protected List<T> listOfItems;
         public JsonRepository(string path)
         {
             if (!File.Exists(path))
@@ -22,12 +21,6 @@ namespace RecipeBook.DL
                 throw new FileNotFoundException("The path is empty or wrong.");
             }
             this.path = path;
-
-            listOfItems = (List<T>)GetAllItems();
-            if (listOfItems == null)
-            {
-                listOfItems = new List<T>();
-            }
         }
         /// <summary>
         /// Method returns list of items along the given path
@@ -43,18 +36,22 @@ namespace RecipeBook.DL
         /// <param name="item">It takes object of class which will be add to the list</param>
         public void Create(T item)
         {
+            List<T> listOfItems = (List<T>)GetAllItems();
+            if(listOfItems == null)
+            {
+                listOfItems = new List<T>();
+            }
             listOfItems.Add(item);
-            Save();
+            Save(listOfItems);
         }
         /// <summary>
         /// Method saves list of items along the given path
         /// </summary>
-        public void Save()
+        /// <param name="list">The list of items we should to write to *.json</param>
+        public void Save(IEnumerable<T> list)
         {
-            File.WriteAllText(path, JsonSerializer.Serialize(listOfItems));
+            File.WriteAllText(path, JsonSerializer.Serialize(list));
         }
-      
-        
     }
     
 }

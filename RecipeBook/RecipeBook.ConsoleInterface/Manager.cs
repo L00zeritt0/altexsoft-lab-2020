@@ -15,49 +15,57 @@ namespace RecipeBook.ConsoleInterface
 {
     class Manager
     {
-        public ResourceManager addCategoryStrings = new ResourceManager("RecipeBook.ConsoleInterface.AddCategoryStrings", typeof(Manager).Assembly);
-        public ResourceManager addIngredientStrings = new ResourceManager("RecipeBook.ConsoleInterface.AddIngredientStrings", typeof(Manager).Assembly);
-        public ResourceManager addStepStrings = new ResourceManager("RecipeBook.ConsoleInterface.AddStepStrings", typeof(Manager).Assembly);
-        
+
+        #region Fields for working with resource files
+        private ResourceManager addCategoryStrings = new ResourceManager("RecipeBook.ConsoleInterface.AddCategoryStrings", typeof(Manager).Assembly);
+        private ResourceManager addIngredientStrings = new ResourceManager("RecipeBook.ConsoleInterface.AddIngredientStrings", typeof(Manager).Assembly);
+        private ResourceManager addStepStrings = new ResourceManager("RecipeBook.ConsoleInterface.AddStepStrings", typeof(Manager).Assembly);
+        #endregion
+
+        #region Temporary variables
         private int flag = 0;
-        /// <summary>
-        /// Temporary variables
-        /// </summary>
         private int result;
         private string temp;
         private string categoryName;
+        #endregion
+
+        #region The lists
         public List<Recipe> recipeListOfCategory;
+        public List<RecipeBookCategory> categories;
         private List<FoodProduct> foodProductList;
         private List<RecipeIngredient> ingredients;
         private List<CookingStep> steps;
-        /// <summary>
-        /// Our controllers
-        /// </summary>
+        #endregion
+
+        #region Fields for working woth Controllers of different types 
         public readonly IController<RecipeBookCategory> categoryController;
         private readonly IController<Recipe> recipeController;
         private readonly IController<FoodProduct> foodProductController;
+        #endregion
+
         public Manager(string pathRecipes, string pathFoods, string pathCategories)
         {
             categoryController = new Controller<RecipeBookCategory>(pathCategories);
             recipeController = new Controller<Recipe>(pathRecipes);
             foodProductController = new Controller<FoodProduct>(pathFoods);
+            categories = (List<RecipeBookCategory>)categoryController.GetAllItems();
         }
         /// <summary>
         /// Method shows the list of categories of our recipe book
         /// </summary>
         public void ShowCategoryList()
         {
-            ShowList<RecipeBookCategory>(categoryController.GetAllItems());
+            ShowList(categories);
         }
         /// <summary>
         /// Methd shows recipe list by some category
         /// </summary>
         /// <param name="i">number of category</param>
-        public void ShowRecipeList(int i)
+        public void ShowRecipeList(string categpry)
         {
             Console.WriteLine("Recipes:");
             recipeListOfCategory = (from r in recipeController.GetAllItems()
-                                    where r.RecipeCategory.CategoryName.Equals(categoryController.GetAllItems()[i - 1].CategoryName)
+                                    where r.Category.Name.Equals(categpry)
                                     select r).ToList<Recipe>();
             ShowList<Recipe>(recipeListOfCategory);
         }
@@ -67,11 +75,11 @@ namespace RecipeBook.ConsoleInterface
         /// <param name="i">number of recipe</param>
         public void ShowRecipe(int i)
         {
-            Console.WriteLine("Recipe of " + recipeListOfCategory[i - 1].RecipeName);
+            Console.WriteLine("Recipe of " + recipeListOfCategory[i - 1].Name);
             Console.WriteLine("\n Ingredients of the recipe:");
-            ShowList<RecipeIngredient>(recipeListOfCategory[i - 1].RecipeIngredients);
+            ShowList<RecipeIngredient>(recipeListOfCategory[i - 1].Ingredients);
             Console.WriteLine("\n Steps of cooking:");
-            ShowList<CookingStep>(recipeListOfCategory[i - 1].RecipeSteps);
+            ShowList<CookingStep>(recipeListOfCategory[i - 1].Steps);
         }
         /// <summary>
         /// Method adds a food product in out foodProduct list
@@ -89,7 +97,7 @@ namespace RecipeBook.ConsoleInterface
         /// </summary>
         public void AddRecipe()
         {
-            foodProductList = foodProductController.GetAllItems();
+            foodProductList = (foodProductController.GetAllItems()).ToList();
             ingredients = new List<RecipeIngredient>();
             steps = new List<CookingStep>();
             Recipe recipe = new Recipe();
@@ -102,15 +110,7 @@ namespace RecipeBook.ConsoleInterface
             EnterRecipeSteps();
             try
             {
-                recipe.RecipeName = recipeName;
-                RecipeBookCategory recipeBookCategory = new RecipeBookCategory();
-                recipeBookCategory.CategoryName = categoryName;
-                recipe.RecipeCategory = recipeBookCategory;
-
-                recipe.RecipeIngredients = ingredients;
-                recipe.RecipeSteps = steps;
-                recipeController.AddItem(recipe);
-                
+                recipe.Name = recipeName;
             }
             catch (Exception e)
             {
@@ -119,13 +119,20 @@ namespace RecipeBook.ConsoleInterface
                 Console.WriteLine(e.Message);
                 Console.ReadLine();
             }
+
+            RecipeBookCategory recipeBookCategory = new RecipeBookCategory();
+            recipeBookCategory.Name = categoryName;
+            recipe.Category = recipeBookCategory;
+            recipe.Ingredients = ingredients;
+            recipe.Steps = steps;
+            recipeController.AddItem(recipe);
         }
         /// <summary>
         /// Method gets and checks a name of a category. It contains a small menu too.
         /// </summary>
         private void EnterRecipeCategory()
         {
-            CommonMethodOfMenu(categoryController.GetAllItems(), null, null, ChooseCategory, addCategoryStrings);
+            CommonMethodOfMenu(categories, null, null, ChooseCategory, addCategoryStrings);
         }
         /// <summary>
         /// Method gets and check list of ingredients. It contains a small menu too.
@@ -172,7 +179,7 @@ namespace RecipeBook.ConsoleInterface
                 Console.WriteLine(rm.GetString("List"));
                 ShowList(list);
                 Console.WriteLine(rm.GetString("Instruction"));
-            
+
                 temp = Console.ReadLine();
                 switch (temp)
                 {
@@ -203,9 +210,9 @@ namespace RecipeBook.ConsoleInterface
         {
             if (int.TryParse(temp, out result))
             {
-                if (result > 0 || result <= foodProductController.GetAllItems().Count)
+                if (result > 0 && result <= (foodProductController.GetAllItems()).ToList().Count)
                 {
-                    temp = foodProductController.GetAllItems()[result - 1].Name;
+                    temp = (foodProductController.GetAllItems()).ToList()[result - 1].Name;
                     Console.WriteLine($"\nEnter the quantity of product {temp} and its measure:");
                     FoodProduct foodProduct = new FoodProduct();
                     foodProduct.Name = temp;
@@ -215,7 +222,6 @@ namespace RecipeBook.ConsoleInterface
                     ingredients.Add(recipeIngredient);
                 }
             }
-            
         }
         /// <summary>
         /// Method chooses the category from category list
@@ -224,9 +230,9 @@ namespace RecipeBook.ConsoleInterface
         {
             if (int.TryParse(temp, out result))
             {
-                if (result > 0 || result <= categoryController.GetAllItems().Count)
+                if (result > 0 && result <= categories.Count)
                 {
-                    categoryName = categoryController.GetAllItems()[result - 1].CategoryName;
+                    categoryName = categories[result - 1].Name;
                     flag = 1;
                 }
             }
@@ -237,7 +243,7 @@ namespace RecipeBook.ConsoleInterface
         private void AddStepToList()
         {
             CookingStep cookingStep = new CookingStep();
-            cookingStep.CookingStepDescription = temp;
+            cookingStep.Description = temp;
             steps.Add(cookingStep);
         }
     }

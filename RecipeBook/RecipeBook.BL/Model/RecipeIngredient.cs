@@ -25,14 +25,13 @@ namespace RecipeBook.BL.Model
             } 
             set 
             {
-                if (String.IsNullOrWhiteSpace(value))
+                if (string.IsNullOrWhiteSpace(value))
                 {
                     throw new ArgumentException("Quantity of a recipe ingredient can't be empty.");
                 }
                 quantityOfFoodProduct = value;
             } 
         }
-        public RecipeIngredient() { }
         public override string ToString()
         {
             return $"{FoodProduct} ({QuantityOfFoodProduct})";

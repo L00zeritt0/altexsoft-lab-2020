@@ -9,29 +9,29 @@ namespace RecipeBook.BL.Model
     /// </summary>
     public class RecipeBookCategory
     {
-        private string categoryName;
+        private string name;
         /// <summary>
         /// Name of a recipe category (with checking)
         /// </summary>
-        public string CategoryName
+        public string Name
         {
             get
             {
-                return categoryName;
+                return name;
             }
             set
             {
-                if (String.IsNullOrWhiteSpace(value))
+                if (string.IsNullOrWhiteSpace(value))
                 {
                     throw new ArgumentException("Category must to have a name.");
                 }
-                categoryName = value;
+                name = value;
             }
         }
-        public RecipeBookCategory() { }
+        //public RecipeBookCategory() { }
         public override string ToString()
         {
-            return CategoryName;
+            return Name;
         }
     }
 }
