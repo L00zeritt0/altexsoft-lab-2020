@@ -118,13 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Instruction" xml:space="preserve">
-    <value>
-Press:
- q - to finish recipe adding;
- a - to enter a step of cooking;</value>
+    <value>Choose the number of subcategory or press:
+   q - to go to the next stage;</value>
   </data>
   <data name="List" xml:space="preserve">
-    <value>
-List of steps:</value>
+    <value>List of subcategories:</value>
   </data>
 </root>

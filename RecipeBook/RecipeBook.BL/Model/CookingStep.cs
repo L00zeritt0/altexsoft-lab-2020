@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace RecipeBook.BL.Model
 {
@@ -12,6 +13,8 @@ namespace RecipeBook.BL.Model
     public class CookingStep
     {
         private string description;
+        [JsonIgnore]
+        public int Id { get; set; }
         /// <summary>
         /// Prorepry CookigStepDescription contains descriprion of cooking step (with checking)
         /// </summary>
@@ -30,6 +33,8 @@ namespace RecipeBook.BL.Model
                 description = value;
             }
         }
+        [JsonIgnore]
+        public int RecipeId { get; set; }
         public override string ToString()
         {
             return description;

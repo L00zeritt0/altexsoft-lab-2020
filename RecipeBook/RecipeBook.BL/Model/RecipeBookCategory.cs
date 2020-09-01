@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace RecipeBook.BL.Model
 {
@@ -10,6 +11,8 @@ namespace RecipeBook.BL.Model
     public class RecipeBookCategory
     {
         private string name;
+        [JsonIgnore]
+        public int Id { get; set; }
         /// <summary>
         /// Name of a recipe category (with checking)
         /// </summary>
@@ -28,7 +31,7 @@ namespace RecipeBook.BL.Model
                 name = value;
             }
         }
-        //public RecipeBookCategory() { }
+        public List<RecipeBookSubcategory> ListOfSubcategories { get; set; } = new List<RecipeBookSubcategory>();
         public override string ToString()
         {
             return Name;

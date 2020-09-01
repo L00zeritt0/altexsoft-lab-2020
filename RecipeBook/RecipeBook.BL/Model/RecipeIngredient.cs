@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace RecipeBook.BL.Model
 {
@@ -10,6 +11,10 @@ namespace RecipeBook.BL.Model
     public class RecipeIngredient
     {
         private string quantityOfFoodProduct;
+        [JsonIgnore]
+        public int Id { get; set; }
+        [JsonIgnore]
+        public int FoodProductId { get; set; }
         /// <summary>
         /// Food product of our recipe ingredient
         /// </summary>

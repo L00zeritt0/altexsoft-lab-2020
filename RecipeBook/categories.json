@@ -1,0 +1,42 @@
+[
+  {
+    "Name": "Category 1",
+    "ListOfSubcategories": [
+      { "Name": "Subcategory 1/1" },
+      { "Name": "Subcategory 1/2" },
+      { "Name": "Subcategory 1/3" }
+    ]
+  },
+  {
+    "Name": "Category 2",
+    "ListOfSubcategories": [
+      { "Name": "Subcategory 2/1" },
+      { "Name": "Subcategory 2/2" },
+      { "Name": "Subcategory 2/3" }
+    ]
+  },
+  {
+    "Name": "Category 3",
+    "ListOfSubcategories": [
+      { "Name": "Subcategory 3/1" },
+      { "Name": "Subcategory 3/2" },
+      { "Name": "Subcategory 3/3" }
+    ]
+  },
+  {
+    "Name": "Category 4",
+    "ListOfSubcategories": [
+      { "Name": "Subcategory 4/1" },
+      { "Name": "Subcategory 4/2" },
+      { "Name": "Subcategory 4/3" }
+    ]
+  },
+  {
+    "Name": "Category 5",
+    "ListOfSubcategories": [
+      { "Name": "Subcategory 5/1" },
+      { "Name": "Subcategory 5/2" },
+      { "Name": "Subcategory 5/3" }
+    ]
+  }
+]

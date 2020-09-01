@@ -27,6 +27,21 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>AddStepStrings.resx</DependentUpon>
     </Compile>
+    <Compile Update="AddSubcategoryStrings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>AddSubcategoryStrings.resx</DependentUpon>
+    </Compile>
+    <Compile Update="mainMenuStrings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>MainMenuStrings.resx</DependentUpon>
+    </Compile>
+    <Compile Update="SubcategoryRecipeListMenuStrings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SubcategoryRecipeListMenuStrings.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
@@ -41,6 +56,18 @@
     <EmbeddedResource Update="AddStepStrings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>AddStepStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="AddSubcategoryStrings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>AddSubcategoryStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="MainMenuStrings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>mainMenuStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="SubcategoryRecipeListMenuStrings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>SubcategoryRecipeListMenuStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
 
