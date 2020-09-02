@@ -13,7 +13,6 @@ namespace RecipeBook.BL.Model
     public class CookingStep
     {
         private string description;
-        [JsonIgnore]
         public int Id { get; set; }
         /// <summary>
         /// Prorepry CookigStepDescription contains descriprion of cooking step (with checking)
@@ -33,8 +32,13 @@ namespace RecipeBook.BL.Model
                 description = value;
             }
         }
-        [JsonIgnore]
         public int RecipeId { get; set; }
+        [JsonIgnore]
+        public Recipe Recipe { get; set; }
+        public CookingStep()
+        {
+            Id = this.GetHashCode();
+        }
         public override string ToString()
         {
             return description;

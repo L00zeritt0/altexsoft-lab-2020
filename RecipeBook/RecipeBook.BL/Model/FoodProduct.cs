@@ -12,7 +12,6 @@ namespace RecipeBook.BL.Model
     public class FoodProduct
     {
         private string name;
-        [JsonIgnore]
         public int Id { get; set; }
         /// <summary>
         /// Preperty Name contains a name of food product (with checking)
@@ -31,6 +30,10 @@ namespace RecipeBook.BL.Model
                 }
                 name = value;
             }
+        }
+        public FoodProduct()
+        {
+            Id = this.GetHashCode();
         }
         public override string ToString()
         {

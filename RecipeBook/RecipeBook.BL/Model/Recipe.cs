@@ -11,7 +11,6 @@ namespace RecipeBook.BL.Model
     public class Recipe
     {
         private string name;
-        [JsonIgnore]
         public int Id { get; set; }
         /// <summary>
         /// Name of a current recipe (with checking).
@@ -31,15 +30,17 @@ namespace RecipeBook.BL.Model
                 name = value;
             }
         }
-        [JsonIgnore]
+
         public int RecipeBookCategoryId { get; set; }
         /// <summary>
         /// Category of a recipe
         /// </summary>
-        public RecipeBookCategory Category { get; set; }
         [JsonIgnore]
+        public RecipeBookCategory Category { get; set; }
+        
         public int RecipeBookSubcategoryId { get; set; }
-        public RecipeBookSubcategory SubCategory { get; set; }
+        [JsonIgnore]
+        public RecipeBookCategory SubCategory { get; set; }
         /// <summary>
         /// Current recipe ingredients list.
         /// </summary>
@@ -48,6 +49,10 @@ namespace RecipeBook.BL.Model
         /// Cooking step list of a recipe
         /// </summary>
         public List<CookingStep> Steps { get; set; }
+        public Recipe()
+        {
+            Id = this.GetHashCode();
+        }
         public override string ToString()
         {
             return Name;

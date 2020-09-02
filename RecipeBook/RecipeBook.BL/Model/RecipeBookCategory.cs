@@ -11,8 +11,8 @@ namespace RecipeBook.BL.Model
     public class RecipeBookCategory
     {
         private string name;
-        [JsonIgnore]
         public int Id { get; set; }
+        public int ParentId { get; set; }
         /// <summary>
         /// Name of a recipe category (with checking)
         /// </summary>
@@ -31,7 +31,8 @@ namespace RecipeBook.BL.Model
                 name = value;
             }
         }
-        public List<RecipeBookSubcategory> ListOfSubcategories { get; set; } = new List<RecipeBookSubcategory>();
+        [JsonIgnore]
+        public List<RecipeBookCategory> ListOfSubcategories { get; set; } = new List<RecipeBookCategory>();
         public override string ToString()
         {
             return Name;

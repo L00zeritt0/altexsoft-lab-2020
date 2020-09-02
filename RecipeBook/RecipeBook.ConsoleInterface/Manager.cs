@@ -23,19 +23,20 @@ namespace RecipeBook.ConsoleInterface
         #region Temporary variables
         private bool flag = false;
         private int result;
+        private int categoryId;
+        private int subcategoryId;
         private string temp;
-        private string categoryName;
-        private string subcategoryName;
         #endregion
 
         #region The lists
         private List<Recipe> recipeListOfCategory;
         private List<RecipeBookCategory> categories;
+        private List<RecipeBookCategory> mainCategories;
+        private List<RecipeBookCategory> subcategories;
         private List<FoodProduct> foodProductList;
         private List<RecipeIngredient> ingredients;
         private List<CookingStep> steps;
         private List<Recipe> listOfRecipes;
-        private List<RecipeBookSubcategory> subcategories;
         private List<Recipe> noCategoryRecipes;
         #endregion
 
@@ -50,29 +51,28 @@ namespace RecipeBook.ConsoleInterface
             categoryController = new Controller<RecipeBookCategory>(pathCategories);
             recipeController = new Controller<Recipe>(pathRecipes);
             foodProductController = new Controller<FoodProduct>(pathFoods);
-            categories = (List<RecipeBookCategory>)categoryController.GetAllItems();
+            categories = categoryController.GetAllItems().ToList();
+            mainCategories = categories.FindAll(category => category.ParentId == 0);
             recipeListOfCategory = new List<Recipe>();
-            foodProductList = (foodProductController.GetAllItems()).ToList();
+            foodProductList = foodProductController.GetAllItems().ToList();
         }
         /// <summary>
         /// Method shows the list of categories of our recipe book and show the list of recipes and subcategories of chosen category
         /// </summary>
         public void ShowMainMenu()
         {
-            CommonMethodOfMenu(categories, new List<object>(), null, AddRecipe, ChooseCategory, mainMenuStrings);
-            GetRecipeListByCategory(categoryName);
-            noCategoryRecipes = (List<Recipe>)recipeListOfCategory.FindAll(recipe => recipe.SubCategory.Name == null);
+            CommonMethodOfMenu(mainCategories, new List<object>(), null, AddRecipe, ChooseCategory, mainMenuStrings);
+            GetRecipeListByCategory(categoryId);
+            noCategoryRecipes = (List<Recipe>)recipeListOfCategory.FindAll(recipe => recipe.RecipeBookSubcategoryId == 0);
             CommonMethodOfMenu(subcategories, noCategoryRecipes, Break, AddRecipe, ChooseSubcategoryOrRecipe, subcategoryRecipeListMenuStrings);
         }
         //private void ShowCategoryList()
         //{
         //    ShowList(categories);
         //}
-        private void GetRecipeListByCategory(string category)
+        private void GetRecipeListByCategory(int categoryId)
         {
-            recipeListOfCategory = (from r in recipeController.GetAllItems()
-                                    where r.Category.Name.Equals(category)
-                                    select r).ToList<Recipe>();
+            recipeListOfCategory = recipeController.GetAllItems().ToList().FindAll(recipe => recipe.RecipeBookCategoryId == categoryId);
         }
         /// <summary>
         /// Method shows current recipe
@@ -111,7 +111,7 @@ namespace RecipeBook.ConsoleInterface
             Console.Clear();
             ingredients = new List<RecipeIngredient>();
             steps = new List<CookingStep>();
-            subcategoryName = null;
+            subcategoryId = 0;
             Recipe recipe = new Recipe();
 
             Console.WriteLine("Enter the name of recipe:");
@@ -122,14 +122,8 @@ namespace RecipeBook.ConsoleInterface
             EnterRecipeIngredients();
             EnterRecipeSteps();
             recipe.Name = recipeName;
-            RecipeBookCategory recipeBookCategory = new RecipeBookCategory();
-            recipeBookCategory.Name = categoryName;
-            recipe.Category = recipeBookCategory;
-
-            RecipeBookSubcategory recipeBookSubcategory = new RecipeBookSubcategory();
-            recipeBookSubcategory.Name = subcategoryName;
-            recipe.SubCategory = recipeBookSubcategory;
-
+            recipe.RecipeBookCategoryId = categoryId;
+            recipe.RecipeBookSubcategoryId = subcategoryId;
             recipe.Ingredients = ingredients;
             recipe.Steps = steps;
             recipeController.AddItem(recipe);
@@ -140,14 +134,14 @@ namespace RecipeBook.ConsoleInterface
         /// </summary>
         private void EnterRecipeCategory()
         {
-            CommonMethodOfMenu(categories, new List<object>(), null, null, ChooseCategory, addCategoryStrings);
+            CommonMethodOfMenu(mainCategories, new List<object>(), null, null, ChooseCategory, addCategoryStrings);
         }
         /// <summary>
         /// Method gets and checks a name of a subcategory. It contains a small menu too.
         /// </summary>
         private void EnterRecipeSubCategory()
         {
-            CommonMethodOfMenu(categories[result - 1].ListOfSubcategories, new List<object>(), Break, null, ChooseSubcategory, addSubCategoryStrings);
+            CommonMethodOfMenu(subcategories, new List<object>(), Break, null, ChooseSubcategory, addSubCategoryStrings);
         }
         /// <summary>
         /// Method gets and check list of ingredients. It contains a small menu too.
@@ -246,19 +240,21 @@ namespace RecipeBook.ConsoleInterface
         /// </summary>
         private void ChooseSubcategoryOrRecipe()
         {
-            if (result <= subcategories.Count)
+            if (result > 0 && result <= subcategories.Count)
             {
-                var recipes = (List<Recipe>)recipeListOfCategory.FindAll(recipe => recipe.SubCategory.Name == subcategories[result - 1].Name);
-                
+                var recipes = (List<Recipe>)recipeListOfCategory.FindAll(recipe => recipe.RecipeBookSubcategoryId == subcategories[result - 1].Id);
+
                 listOfRecipes = recipes;
                 CommonMethodOfMenu(recipes, new List<object>(), Break, AddRecipe, ShowRecipe, subcategoryRecipeListMenuStrings);
+                flag = true;
             }
-            else if (result <= (subcategories.Count + noCategoryRecipes.Count))
+            else if (result > 0 && result <= (subcategories.Count + noCategoryRecipes.Count))
             {
                 listOfRecipes = noCategoryRecipes;
                 result -= (subcategories.Count);
                 ShowRecipe();
             }
+           
         }
         /// <summary>
         /// Method sets flag
@@ -286,10 +282,10 @@ namespace RecipeBook.ConsoleInterface
         /// </summary>
         private void ChooseCategory()
         {
-            if (result > 0 && result <= categories.Count)
+            if (result > 0 && result <= mainCategories.Count)
             {
-                subcategories = categories[result - 1].ListOfSubcategories;
-                categoryName = categories[result - 1].Name;
+                categoryId = mainCategories[result - 1].Id;
+                subcategories = categories.FindAll(category => category.ParentId == categoryId);
                 flag = true;
             }
         }
@@ -300,7 +296,7 @@ namespace RecipeBook.ConsoleInterface
         {
             if (result > 0 && result <= subcategories.Count)
             {
-                subcategoryName = subcategories[result - 1].Name;
+                subcategoryId = subcategories[result - 1].Id;
                 flag = true;
             }
         }

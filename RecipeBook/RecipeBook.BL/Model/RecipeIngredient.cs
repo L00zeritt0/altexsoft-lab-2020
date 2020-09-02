@@ -11,13 +11,12 @@ namespace RecipeBook.BL.Model
     public class RecipeIngredient
     {
         private string quantityOfFoodProduct;
-        [JsonIgnore]
         public int Id { get; set; }
-        [JsonIgnore]
         public int FoodProductId { get; set; }
         /// <summary>
         /// Food product of our recipe ingredient
         /// </summary>
+        [JsonIgnore]
         public FoodProduct FoodProduct { get; set; }
         /// <summary>
         /// Quantitey of our recipe ingredient
@@ -36,6 +35,10 @@ namespace RecipeBook.BL.Model
                 }
                 quantityOfFoodProduct = value;
             } 
+        }
+        public RecipeIngredient()
+        {
+            Id = this.GetHashCode();
         }
         public override string ToString()
         {
