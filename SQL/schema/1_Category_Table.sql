@@ -1,0 +1,11 @@
+CREATE DATABASE RecipeBook;
+GO
+
+USE RecipeBook;
+
+CREATE TABLE Category
+(
+ Id INT CONSTRAINT PK_Category_Id PRIMARY KEY IDENTITY,
+ Name NVARCHAR(50) CONSTRAINT UQ_Category_Name UNIQUE NOT NULL,
+ ParentId INT CONSTRAINT FK_Category_To_Category REFERENCES Category (Id)
+);
