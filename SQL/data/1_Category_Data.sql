@@ -1,5 +1,3 @@
-USE RecipeBook;
-
 INSERT Category 
 VALUES
  ('Category 1', NULL),

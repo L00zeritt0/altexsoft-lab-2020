@@ -1,5 +1,3 @@
-USE RecipeBook;
-
 INSERT FoodProduct
 VALUES
 ('Product 1'),

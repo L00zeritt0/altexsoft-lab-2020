@@ -1,5 +1,3 @@
-USE RecipeBook;
-
 INSERT CookingStep
 VALUES
 ('Step 1', 1),
@@ -21,4 +19,14 @@ VALUES
 
 ('Step 1', 6),
 ('Step 2', 6),
-('Step 3', 6);
+('Step 3', 6),
+
+('Step 1', 7),
+('Step 2', 7),
+
+('Step 1', 8),
+('Step 2', 8),
+('Step 3', 8),
+('Step 4', 8),
+
+('Step 1', 9);

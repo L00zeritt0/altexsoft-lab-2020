@@ -1,12 +1,9 @@
-USE RecipeBook;
-
-WITH TopThreeRecipesTable AS
+SELECT xxx.Name AS RecipeName, FoodProduct.Name AS Ingredient, Ingredient.Quantity FROM 
 (
- SELECT TOP 3 * FROM Recipe 
- WHERE Recipe.CategoryId = 3
- ORDER BY SubcategoryId
-)
-
-SELECT TopThreeRecipesTable.Name, FoodProduct.Name, Quantity FROM TopThreeRecipesTable
-JOIN Ingredient ON TopThreeRecipesTable.Id = Ingredient.RecipeId
-JOIN FoodProduct ON FoodProductId = FoodProduct.Id
+	SELECT TOP 3 Recipe.* FROM Recipe
+	JOIN Category ON Recipe.CategoryId = Category.Id
+	WHERE Category.Id = 3 OR Category.ParentId = 3
+	ORDER BY Category.Id
+) AS xxx
+JOIN Ingredient ON xxx.Id = Ingredient.RecipeId
+JOIN FoodProduct ON Ingredient.FoodProductId = FoodProduct.Id

@@ -1,5 +1,3 @@
-USE RecipeBook;
-
 CREATE TABLE Ingredient
 (
  Id INT CONSTRAINT PK_Ingredient_Id PRIMARY KEY IDENTITY,
