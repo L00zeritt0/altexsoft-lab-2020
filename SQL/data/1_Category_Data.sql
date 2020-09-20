@@ -24,4 +24,7 @@ VALUES
 
  ('Subcategory 5/1', 5),
  ('Subcategory 5/2', 5),
- ('Subcategory 5/3', 5);
+ ('Subcategory 5/3', 5),
+
+ ('Subcategory 3/1/1', 12),
+ ('Subcategory 3/1/2', 12);

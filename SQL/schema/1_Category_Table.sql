@@ -1,8 +1,3 @@
-CREATE DATABASE RecipeBook;
-GO
-
-USE RecipeBook;
-
 CREATE TABLE Category
 (
  Id INT CONSTRAINT PK_Category_Id PRIMARY KEY IDENTITY,
