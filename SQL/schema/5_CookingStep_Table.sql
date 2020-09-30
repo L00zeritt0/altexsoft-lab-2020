@@ -1,0 +1,6 @@
+CREATE TABLE CookingStep
+(
+ Id INT CONSTRAINT PK_CookingStep_Id PRIMARY KEY IDENTITY,
+ StepDescription NVARCHAR(50) NOT NULL,
+ RecipeId INT CONSTRAINT FK_CookingStep_To_Recipe REFERENCES Recipe (Id) NOT NULL
+);
