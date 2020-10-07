@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 namespace HomeTask4.SharedKernel.Interfaces
 {
     public interface IController
-    {
-        Task<List<T>> GetAllItems<T>() where T : BaseEntity;
-        Task<T> AddItem<T>(T item) where T : BaseEntity;
-        Task<T> GetItemByID<T>(int i) where T : BaseEntity;
-        Task Save();
+    { 
+        Task<IEnumerable<T>> GetAllItemsAsync<T>() where T : BaseEntity;
+        T AddItem<T>(T item) where T : BaseEntity;
+        T GetItemById<T>(int i) where T : BaseEntity;
+        Task SaveAsync();
     }
 }

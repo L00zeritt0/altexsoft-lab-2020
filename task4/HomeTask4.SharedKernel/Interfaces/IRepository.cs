@@ -5,10 +5,10 @@ namespace HomeTask4.SharedKernel.Interfaces
 {
     public interface IRepository
     {
-        Task<T> GetByIdAsync<T>(int id) where T : BaseEntity;
-        Task<List<T>> ListAsync<T>() where T : BaseEntity;
-        Task<T> AddAsync<T>(T entity) where T : BaseEntity;
-        Task<T> UpdateAsync<T>(T entity) where T : BaseEntity;
-        Task<T> DeleteAsync<T>(T entity) where T : BaseEntity;
+        T GetById<T>(int id) where T : BaseEntity;
+        Task<IEnumerable<T>> GetItemsAsync<T>() where T : BaseEntity;
+        T Add<T>(T entity) where T : BaseEntity;
+        T Update<T>(T entity) where T : BaseEntity;
+        T Delete<T>(T entity) where T : BaseEntity;
     }
 }

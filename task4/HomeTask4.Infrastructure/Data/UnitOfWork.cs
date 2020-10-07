@@ -5,19 +5,19 @@ namespace HomeTask4.Infrastructure.Data
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private RecipeBookDbContext _context;
+        private RecipeBookDbContext context;
 
         public IRepository Repository { get; }
 
         public UnitOfWork(RecipeBookDbContext context, IRepository repository)
         {
-            _context = context;
+            this.context = context;
             Repository = repository;
         }
 
         public Task SaveChangesAsync()
         {
-            return _context.SaveChangesAsync();
+            return context.SaveChangesAsync();
         }
     }
 }

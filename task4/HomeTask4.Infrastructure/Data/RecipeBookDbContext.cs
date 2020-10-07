@@ -14,10 +14,8 @@ namespace HomeTask4.Infrastructure.Data
         public DbSet<CookingStep> Steps { get; set; }
         public RecipeBookDbContext(DbContextOptions<RecipeBookDbContext> options)
             : base(options)
-        {
-            //Database.EnsureDeleted();
+        {  
             Database.EnsureCreated();
-           
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

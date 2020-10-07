@@ -11,23 +11,23 @@ using HomeTask4.SharedKernel.Interfaces;
 
 namespace HomeTask4.Cmd
 {
-    class Manager
+    public class Manager
     {
         #region Fields for working with resource files
-        private ResourceManager addCategoryStrings = new ResourceManager("HomeTask4.Cmd.AddCategoryStrings", typeof(Manager).Assembly);
-        private ResourceManager addIngredientStrings = new ResourceManager("HomeTask4.Cmd.AddIngredientStrings", typeof(Manager).Assembly);
-        private ResourceManager addStepStrings = new ResourceManager("HomeTask4.Cmd.AddStepStrings", typeof(Manager).Assembly);
-        private ResourceManager mainMenuStrings = new ResourceManager("HomeTask4.Cmd.MainMenuStrings", typeof(Manager).Assembly);
-        private ResourceManager subcategoryRecipeListMenuStrings = new ResourceManager("HomeTask4.Cmd.SubcategoryRecipeListMenuStrings", typeof(Manager).Assembly);
-        private ResourceManager addSubCategoryStrings = new ResourceManager("HomeTask4.Cmd.AddSubcategoryStrings", typeof(Manager).Assembly);
+        private ResourceManager addCategoryStrings = new ResourceManager("HomeTask4.Cmd.Resources.AddCategoryStrings", typeof(Manager).Assembly);
+        private ResourceManager addIngredientStrings = new ResourceManager("HomeTask4.Cmd.Resources.AddIngredientStrings", typeof(Manager).Assembly);
+        private ResourceManager addStepStrings = new ResourceManager("HomeTask4.Cmd.Resources.AddStepStrings", typeof(Manager).Assembly);
+        private ResourceManager mainMenuStrings = new ResourceManager("HomeTask4.Cmd.Resources.MainMenuStrings", typeof(Manager).Assembly);
+        private ResourceManager subcategoryRecipeListMenuStrings = new ResourceManager("HomeTask4.Cmd.Resources.SubcategoryRecipeListMenuStrings", typeof(Manager).Assembly);
+        private ResourceManager addSubCategoryStrings = new ResourceManager("HomeTask4.Cmd.Resources.AddSubcategoryStrings", typeof(Manager).Assembly);
         #endregion
 
         #region Temporary variables
-        private bool flag = false;
+        private bool loopBreaker = false;
         private int result;
         private int categoryId;
         private string temp;
-        
+
         #endregion
 
         #region The lists
@@ -38,8 +38,6 @@ namespace HomeTask4.Cmd
         private List<FoodProduct> foodProductList;
         private List<RecipeIngredient> ingredients;
         private List<CookingStep> steps;
-        private List<Recipe> listOfRecipes;
-        private List<Recipe> noCategoryRecipes;
         #endregion
 
         #region Fields for working with Controllers of different types 
@@ -49,43 +47,51 @@ namespace HomeTask4.Cmd
         public Manager(IController controller)
         {
             this.controller = controller;
-            categories = controller.GetAllItems<RecipeBookCategory>().Result;
-            mainCategories = categories.FindAll(category => category.ParentId == null);
-            recipeListOfCategory = new List<Recipe>();
-            foodProductList = controller.GetAllItems<FoodProduct>().Result;
         }
         /// <summary>
         /// Method shows the list of categories of our recipe book and show the list of recipes and subcategories of chosen category
         /// </summary>
         public void ShowMainMenu()
         {
+            GetAllFoodProducts();
+            GetMainCategories();
             CommonMethodOfMenu(mainCategories, new List<object>(), null, AddRecipe, ChooseCategory, mainMenuStrings);
             GetRecipeListByCategory(categoryId);
             CommonMethodOfMenu(subcategories, recipeListOfCategory, Break, AddRecipe, ChooseSubcategoryOrRecipe, subcategoryRecipeListMenuStrings);
         }
         private void GetRecipeListByCategory(int categoryId)
         {
-            recipeListOfCategory = controller.GetAllItems<Recipe>().Result.FindAll(recipe => recipe.RecipeBookCategoryId == categoryId);
+            recipeListOfCategory = controller.GetAllItemsAsync<Recipe>().Result.ToList().FindAll(recipe => recipe.RecipeBookCategoryId == categoryId);
+        }
+        private void GetAllCategoriest()
+        {
+            categories = controller.GetAllItemsAsync<RecipeBookCategory>().Result.ToList();
+        }
+        private void GetMainCategories()
+        {
+            GetAllCategoriest();
+            mainCategories = categories.FindAll(category => category.ParentId == null);
+        }
+        private void GetAllFoodProducts()
+        {
+            foodProductList = controller.GetAllItemsAsync<FoodProduct>().Result.ToList();
         }
         /// <summary>
         /// Method shows current recipe
         /// </summary>
-        /// <param name="i">number of recipe</param>
-        private void ShowRecipe()
+        private void ShowRecipe(int number)
         {
-            if (result > 0 && result <= listOfRecipes.Count)
-            {
-                Console.Clear();
-                var currentRecipe = listOfRecipes.ElementAt(result - 1);
-                Console.WriteLine("Recipe of " + currentRecipe.Name + "\n\n Ingredients of the recipe:");
-                ShowList<RecipeIngredient>(controller.GetAllItems<RecipeIngredient>().
-                    Result.FindAll(ingredient => ingredient.RecipeId == currentRecipe.Id));
-                Console.WriteLine("\n Steps of cooking:");
-                ShowList<CookingStep>(controller.GetAllItems<CookingStep>().
-                    Result.FindAll(step => step.RecipeId == currentRecipe.Id));
-                flag = true;
-                Console.ReadLine();
-            }
+            Console.Clear();
+            number = recipeListOfCategory[number - 1].Id;
+            var currentRecipe = controller.GetItemById<Recipe>(number);
+            Console.WriteLine("Recipe of " + currentRecipe.Name + "\n\n Ingredients of the recipe:");
+            ShowList<RecipeIngredient>(controller.GetAllItemsAsync<RecipeIngredient>().
+                Result.ToList().FindAll(ingredient => ingredient.RecipeId == number));
+            Console.WriteLine("\n Steps of cooking:");
+            ShowList<CookingStep>(controller.GetAllItemsAsync<CookingStep>().
+                Result.ToList().FindAll(step => step.RecipeId == number));
+            loopBreaker = true;
+            Console.ReadLine();
         }
         /// <summary>
         /// Method adds a food product in out foodProduct list
@@ -99,9 +105,9 @@ namespace HomeTask4.Cmd
             foodProductList.Add(foodProduct);
         }
         /// <summary>
-        /// Method collect an information about our recipe and adds it into our recipe list
+        /// Method collects an information about our recipe and adds it into our recipe list
         /// </summary>
-        private async void AddRecipe()
+        private void AddRecipe()
         {
             Console.Clear();
             ingredients = new List<RecipeIngredient>();
@@ -118,9 +124,9 @@ namespace HomeTask4.Cmd
             recipe.RecipeBookCategoryId = categoryId;
             recipe.Ingredients = ingredients;
             recipe.Steps = steps;
-            await controller.AddItem<Recipe>(recipe);
-            await controller.Save();
-            flag = true;
+            controller.AddItem<Recipe>(recipe);
+            controller.SaveAsync().Wait();
+            loopBreaker = true;
         }
         /// <summary>
         /// Method gets and checks a name of a category. It contains a small menu too.
@@ -193,9 +199,9 @@ namespace HomeTask4.Cmd
         /// <param name="pressA">If press a delegate parameter</param>
         /// <param name="finalStep">Final step of common metod. Delegate parameter</param>
         /// <param name="rm">Recource file</param>
-        private void CommonMethodOfMenu<T, V>(List<T> list1, List<V> list2, Action pressQ, Action pressA, Action finalStep, ResourceManager rm)
+        private void CommonMethodOfMenu<T, V>(List<T> list1, List<V> list2, Action pressQ, Action pressA, Action<int> finalStep, ResourceManager rm)
         {
-            while (!flag)
+            while (!loopBreaker)
             {
                 Console.Clear();
                 Console.WriteLine(rm.GetString("List"));
@@ -222,46 +228,44 @@ namespace HomeTask4.Cmd
                     default:
                         if (int.TryParse(key.KeyChar.ToString(), out result))
                         {
-                            finalStep();
+                            finalStep(result);
                         }
                         break;
                 }
             }
-            flag = false;
+            loopBreaker = false;
         }
         /// <summary>
         /// Method chooses subcategory or recipe from both lists (list of subcategories or list of recipes without subcategory)
         /// </summary>
-        private void ChooseSubcategoryOrRecipe()
+        private void ChooseSubcategoryOrRecipe(int number)
         {
-            if (result > 0 && result <= subcategories.Count)
+            if (number > 0 && number <= subcategories.Count)
             {
-                GetRecipeListByCategory(subcategories[result - 1].Id);
-                listOfRecipes = recipeListOfCategory;
+                GetRecipeListByCategory(subcategories[number - 1].Id);
                 CommonMethodOfMenu(recipeListOfCategory, new List<object>(), Break, AddRecipe, ShowRecipe, subcategoryRecipeListMenuStrings);
-                flag = true;
+                loopBreaker = true;
             }
-            else if (result > 0 && result <= (subcategories.Count + recipeListOfCategory.Count))
+            else if (number > 0 && number <= (subcategories.Count + recipeListOfCategory.Count))
             {
-                listOfRecipes = recipeListOfCategory;
-                result -= (subcategories.Count);
-                ShowRecipe();
+                number -= (subcategories.Count);
+                ShowRecipe(number);
             }
-           
+
         }
         /// <summary>
         /// Method sets flag
         /// </summary>
         private void Break()
         {
-            flag = true;
+            loopBreaker = true;
         }
         /// <summary>
         /// Method adds new ingredient to the list of ingredients in CommonMethodOfMenu
         /// </summary>
-        private void AddIngredientToList()
+        private void AddIngredientToList(int number)
         {
-            FoodProduct foodProduct = foodProductList.ElementAt(result - 1);
+            FoodProduct foodProduct = foodProductList.ElementAt(number - 1);
             Console.WriteLine($"\nEnter the quantity of product {temp} and its measure:");
             RecipeIngredient recipeIngredient = new RecipeIngredient();
             recipeIngredient.FoodProduct = foodProduct;
@@ -271,24 +275,24 @@ namespace HomeTask4.Cmd
         /// <summary>
         /// Method chooses the category from category list
         /// </summary>
-        private void ChooseCategory()
+        private void ChooseCategory(int number)
         {
-            if (result > 0 && result <= mainCategories.Count)
+            if (number > 0 && number <= mainCategories.Count)
             {
-                categoryId = mainCategories[result - 1].Id;
+                categoryId = mainCategories[number - 1].Id;
                 subcategories = categories.FindAll(category => category.ParentId == categoryId);
-                flag = true;
+                loopBreaker = true;
             }
         }
         /// <summary>
         /// Method chooses the subcategory from subcategory list
         /// </summary>
-        private void ChooseSubcategory()
+        private void ChooseSubcategory(int number)
         {
-            if (result > 0 && result <= subcategories.Count)
+            if (number > 0 && number <= subcategories.Count)
             {
-                categoryId = subcategories[result - 1].Id;
-                flag = true;
+                categoryId = subcategories[number - 1].Id;
+                loopBreaker = true;
             }
         }
         /// <summary>

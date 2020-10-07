@@ -10,31 +10,26 @@ namespace HomeTask4.Core.Controllers
 {
     public class Controller: IController
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IUnitOfWork unitOfWork;
         public Controller(IUnitOfWork unitOfWork)
         {
-            _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
+            this.unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
         }
-        public async Task<List<T>> GetAllItems<T>() where T: BaseEntity
+        public Task<IEnumerable<T>> GetAllItemsAsync<T>() where T: BaseEntity
         {
-            var list = await _unitOfWork.Repository.ListAsync<T>();
-            if (list == null)
-            {
-                return new List<T>();
-            }
-            return list;
+            return unitOfWork.Repository.GetItemsAsync<T>();
         }
-        public async Task<T> AddItem<T>(T item) where T : BaseEntity
+        public T AddItem<T>(T item) where T : BaseEntity
         {
-            return await _unitOfWork.Repository.AddAsync<T>(item);
+            return  unitOfWork.Repository.Add<T>(item);
         }
-        public async Task<T> GetItemByID<T>(int i) where T: BaseEntity
+        public T GetItemById<T>(int i) where T: BaseEntity
         {
-            return await _unitOfWork.Repository.GetByIdAsync<T>(i);
+            return  unitOfWork.Repository.GetById<T>(i);
         }
-        public async Task Save()
+        public async Task SaveAsync()
         {
-            await _unitOfWork.SaveChangesAsync();
+            await unitOfWork.SaveChangesAsync();
         }
     }
 }

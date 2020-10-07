@@ -26,14 +26,13 @@ namespace HomeTask4.Cmd
     public class Program
     {
 
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             Manager manager;
             try
             {
                 var host = CreateHostBuilder(args).Build();
-                var controller = host.Services.GetRequiredService<IController>();
-                manager = new Manager(controller);
+                manager = host.Services.GetRequiredService<Manager>();
             }
             catch (Exception e)
             {
@@ -70,11 +69,11 @@ namespace HomeTask4.Cmd
                {
                    services.AddInfrastructure(context.Configuration.GetConnectionString("Default"));
                    services.AddScoped<IController, Controller>(sp => new Controller(sp.GetRequiredService<IUnitOfWork>()));
+                   services.AddTransient<Manager>();
                })
                .ConfigureLogging(config =>
                {
                    config.ClearProviders();
-                   //config.AddConsole();
                });
     }
 }

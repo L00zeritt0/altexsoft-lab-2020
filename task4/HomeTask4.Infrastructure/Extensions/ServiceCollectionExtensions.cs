@@ -10,10 +10,8 @@ namespace HomeTask4.Infrastructure.Extensions
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, string connectionString)
         {
             services.AddDbContext<RecipeBookDbContext>(opts => opts.UseSqlServer(connectionString));
-            services.AddScoped<IRepository, EfRepository>(sp => new EfRepository(sp.GetRequiredService<RecipeBookDbContext>()));
-            services.AddScoped<IUnitOfWork, UnitOfWork>(sp => new UnitOfWork(
-                sp.GetRequiredService<RecipeBookDbContext>(),
-                sp.GetRequiredService<IRepository>()));
+            services.AddScoped<IRepository, EfRepository>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             return services;
         }
