@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using HomeTask4.Core.Controllers;
+using System.Threading.Tasks;
 
 /// <summary>
 /// A skeleton for the Home Task 4 in AltexSoft Lab 2020
@@ -26,7 +27,7 @@ namespace HomeTask4.Cmd
     public class Program
     {
 
-        public static void Main(string[] args)
+        public async static Task Main(string[] args)
         {
             Manager manager;
             try
@@ -45,7 +46,7 @@ namespace HomeTask4.Cmd
             {
                 try
                 {
-                    manager.ShowMainMenu();
+                    await manager.ShowMainMenu();
                 }
                 catch (Exception e)
                 {

@@ -32,7 +32,7 @@ namespace HomeTask4.Core.Entities
         public List<RecipeIngredient> RecipeIngredients { get; set; }
         public override string ToString()
         {
-            return name;
+            return Name;
         }
     }
 }
