@@ -17,21 +17,21 @@ namespace HomeTask4.Infrastructure.Data
             this.context = context;
         }
 
-        public T Add<T>(T entity) where T : BaseEntity
+        public async Task<T> AddItemAsync<T>(T entity) where T : BaseEntity
         {
-            return context.Set<T>().Add(entity).Entity;
+            return (await context.Set<T>().AddAsync(entity)).Entity;
         }
-        public T Delete<T>(T entity) where T : BaseEntity
+        public T DeleteItem<T>(T entity) where T : BaseEntity
         {
             return context.Set<T>().Remove(entity).Entity;
         }
-        public T GetById<T>(int id) where T : BaseEntity
+        public async Task<T> GetByIdAsync<T>(int id) where T : BaseEntity
         {
-            return context.Set<T>().Find(id);
+            return await context.Set<T>().FindAsync(id).AsTask();
         }
-        public Task<IEnumerable<T>> GetItemsAsync<T>() where T : BaseEntity
+        public async Task<IEnumerable<T>> GetItemsAsync<T>() where T : BaseEntity
         {
-            return Task.Run(() => { return context.Set<T>().AsEnumerable(); });
+            return await context.Set<T>().ToListAsync();
         }
         public T Update<T>(T entity) where T : BaseEntity
         {

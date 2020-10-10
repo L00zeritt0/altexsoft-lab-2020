@@ -19,13 +19,13 @@ namespace HomeTask4.Core.Controllers
         {
             return unitOfWork.Repository.GetItemsAsync<T>();
         }
-        public T AddItem<T>(T item) where T : BaseEntity
+        public Task<T> AddItem<T>(T item) where T : BaseEntity
         {
-            return  unitOfWork.Repository.Add<T>(item);
+            return  unitOfWork.Repository.AddItemAsync<T>(item);
         }
-        public T GetItemById<T>(int i) where T: BaseEntity
+        public Task<T> GetItemById<T>(int i) where T: BaseEntity
         {
-            return  unitOfWork.Repository.GetById<T>(i);
+            return  unitOfWork.Repository.GetByIdAsync<T>(i);
         }
         public async Task SaveAsync()
         {

@@ -14,7 +14,6 @@ namespace HomeTask4.Cmd
         private int result;
         private int? categoryId;
         private int recipeId;
-        private string temp;
         #endregion
         private readonly IController controller;
         public Manager(IController controller)
@@ -38,7 +37,7 @@ namespace HomeTask4.Cmd
                 switch (key.Key)
                 {
                     case ConsoleKey.Q:
-                        var category = controller.GetItemById<RecipeBookCategory>(categoryId.Value);
+                        var category = await controller.GetItemById<RecipeBookCategory>(categoryId.Value);
                         if (category.ParentId.HasValue)
                         {
                             categoryId = category.ParentId.Value;
@@ -102,7 +101,7 @@ namespace HomeTask4.Cmd
         private async Task ShowRecipe(int recipeId)
         {
             Console.Clear();
-            var currentRecipe = controller.GetItemById<Recipe>(recipeId);
+            var currentRecipe = await controller.GetItemById<Recipe>(recipeId);
             var foodProducts = (await controller.GetAllItemsAsync<FoodProduct>()).ToList();
             var ingredients = (await controller.GetAllItemsAsync<RecipeIngredient>()).ToList()
                 .FindAll(ingredient => ingredient.RecipeId == recipeId);
@@ -147,8 +146,7 @@ namespace HomeTask4.Cmd
             while (loopBreaker)
             {
                 Console.WriteLine("\nChoose an ID of a category:");
-                temp = Console.ReadLine();
-                if (int.TryParse(temp, out result))
+                if (int.TryParse(Console.ReadLine(), out result))
                 {
                     if (categories.Any(category => category.Id == result))
                     {

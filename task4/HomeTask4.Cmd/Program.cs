@@ -8,20 +8,6 @@ using Microsoft.Extensions.Logging;
 using HomeTask4.Core.Controllers;
 using System.Threading.Tasks;
 
-/// <summary>
-/// A skeleton for the Home Task 4 in AltexSoft Lab 2020
-/// For more details how to organize configuration, logging and dependency injections in console app
-/// watch https://www.youtube.com/watch?v=GAOCe-2nXqc
-///
-/// For more information about General Host
-/// read https://docs.microsoft.com/en-us/aspnet/core/fundamentals/host/generic-host?view=aspnetcore-3.1
-///
-/// For more information about Logging
-/// read https://docs.microsoft.com/en-us/aspnet/core/fundamentals/logging/?view=aspnetcore-3.1
-///
-/// For more information about Dependency Injection
-/// read https://docs.microsoft.com/en-us/aspnet/core/fundamentals/dependency-injection?view=aspnetcore-3.1
-/// </summary>
 namespace HomeTask4.Cmd
 {
     public class Program
@@ -69,7 +55,7 @@ namespace HomeTask4.Cmd
                .ConfigureServices((context, services) =>
                {
                    services.AddInfrastructure(context.Configuration.GetConnectionString("Default"));
-                   services.AddScoped<IController, Controller>(sp => new Controller(sp.GetRequiredService<IUnitOfWork>()));
+                   services.AddScoped<IController, Controller>();
                    services.AddTransient<Manager>();
                })
                .ConfigureLogging(config =>
