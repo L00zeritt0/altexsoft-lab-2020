@@ -13,91 +13,81 @@ namespace HomeTask4.Core.Tests
 {
     public class ControllerTests
     {
-        List<Recipe> recipes = new List<Recipe>
+        private Mock<IRepository> repositoryMock;
+
+        private Mock<IUnitOfWork> unitOfWorkMock;
+        private Controller controller;
+        
+
+        private IEnumerable<Recipe> recipes = new List<Recipe>
                 {
                     new Recipe { Id = 1, Name = "Recipe 1"},
                     new Recipe { Id = 3, Name = "Recipe 2"},
                     new Recipe { Id = 5, Name = "Recipe 3"}
                 };
+
+        public ControllerTests()
+        {
+            repositoryMock = new Mock<IRepository>();
+            repositoryMock.Setup(repository => repository.GetItemsAsync<Recipe>()).ReturnsAsync(recipes);
+
+            unitOfWorkMock = new Mock<IUnitOfWork>();
+            unitOfWorkMock.SetupGet(unitOfWork => unitOfWork.Repository).Returns(repositoryMock.Object);
+
+            controller = new Controller(unitOfWorkMock.Object);
+        }
+
         [Fact]
         public async void GetAllItemsAsync_ShouldReturnListOfEntities()
         {
             //Arrange
-            var repositoryMock = new Mock<IRepository>();
-            repositoryMock.Setup(repository => repository.GetItemsAsync<Recipe>()).ReturnsAsync(recipes);
-
-            var unitOfWorkMock = new Mock<IUnitOfWork>();
-            unitOfWorkMock.Setup(unitOfWork => unitOfWork.Repository).Returns(repositoryMock.Object);
-
-            var controller = new Controller(unitOfWorkMock.Object);
-
-            int expected = 3;
+            
 
             //Act
             var list = await controller.GetAllItemsAsync<Recipe>();
 
             //Assert
-            Assert.Equal(expected, list.ToList().Count);
+            repositoryMock.Verify(repository => repository.GetItemsAsync<Recipe>());
+            Assert.Same(recipes, list);
 
         }
         [Fact]
         public async void AddItems_ShouldAddNewItemToTheList()
         {
             //Arrange
-            var repositoryMock = new Mock<IRepository>();
-            //repositoryMock.Setup(repository => repository.GetItemsAsync<Recipe>()).ReturnsAsync(recipes);
-
             Recipe newRecipe = new Recipe { Id = 7, Name = "Recipe 4"};
             repositoryMock.Setup(repository => repository.AddItemAsync<Recipe>(newRecipe)).ReturnsAsync((Recipe recipe) => recipe);
 
-            var unitOfWorkMock = new Mock<IUnitOfWork>();
-            unitOfWorkMock.Setup(unitOfWork => unitOfWork.Repository).Returns(repositoryMock.Object);
-
-            var controller = new Controller(unitOfWorkMock.Object);
-
-            Recipe expected = newRecipe;
+            Recipe expectedRecipe = newRecipe;
 
             //Act
             var item = await controller.AddItem<Recipe>(newRecipe);
 
             //Assert
-            Assert.Equal(expected.Name, item.Name);
+            repositoryMock.Verify(repository => repository.AddItemAsync<Recipe>(newRecipe));
+            Assert.Equal(expectedRecipe.Name, item.Name);
 
         }
         [Fact]
         public async void GetItemById_ShouldReturnItemByIdNumber()
         {
             //Arrange
-            var repositoryMock = new Mock<IRepository>();
-
-            repositoryMock.Setup(repository => repository.GetItemsAsync<Recipe>()).ReturnsAsync(recipes);
-            Recipe recipe = recipes[2];
-            repositoryMock.Setup(repository => repository.GetByIdAsync<Recipe>(3)).ReturnsAsync(recipes.Find(recipe => recipe.Id == 3));
-
-            var unitOfWorkMock = new Mock<IUnitOfWork>();
-            unitOfWorkMock.Setup(unitOfWork => unitOfWork.Repository).Returns(repositoryMock.Object);
-
-            var controller = new Controller(unitOfWorkMock.Object);
-
-            int expected = 3;
+            Recipe recipe = recipes.Last();
+            repositoryMock.Setup(repository => repository.GetByIdAsync<Recipe>(5)).ReturnsAsync(recipes.First(recipe => recipe.Id == 5));
+            int expectedRecipeId = recipe.Id;
 
             //Act
-            var item = await controller.GetItemById<Recipe>(3);
+            var item = await controller.GetItemById<Recipe>(recipe.Id);
 
             //Assert
-            Assert.Equal(expected, item.Id);
+            repositoryMock.Verify(repository => repository.GetByIdAsync<Recipe>(expectedRecipeId));
+            Assert.Equal(expectedRecipeId, item.Id);
 
         }
         [Fact]
         public async void SaveAsync_ShouldWork()
         {
             //Arrange
-            var repositoryMock = new Mock<IRepository>();
-
-            var unitOfWorkMock = new Mock<IUnitOfWork>();
-            unitOfWorkMock.Setup(unitOfWork => unitOfWork.Repository).Returns(repositoryMock.Object);
-
-            var controller = new Controller(unitOfWorkMock.Object);
 
             //Act
             await controller.SaveAsync();
