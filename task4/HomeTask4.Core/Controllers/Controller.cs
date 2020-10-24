@@ -19,17 +19,19 @@ namespace HomeTask4.Core.Controllers
         {
             return unitOfWork.Repository.GetItemsAsync<T>();
         }
-        public Task<T> AddItem<T>(T item) where T : BaseEntity
+        public async Task<T> AddItem<T>(T item) where T : BaseEntity
         {
-            return  unitOfWork.Repository.AddItemAsync<T>(item);
+            Task<T> task = unitOfWork.Repository.AddItemAsync<T>(item);
+            await SaveAsync();
+            return await task;
         }
         public Task<T> GetItemById<T>(int i) where T: BaseEntity
         {
             return  unitOfWork.Repository.GetByIdAsync<T>(i);
         }
-        public async Task SaveAsync()
+        private Task SaveAsync()
         {
-            await unitOfWork.SaveChangesAsync();
+            return unitOfWork.SaveChangesAsync();
         }
     }
 }

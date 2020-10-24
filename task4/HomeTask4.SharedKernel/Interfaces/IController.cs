@@ -10,6 +10,5 @@ namespace HomeTask4.SharedKernel.Interfaces
         Task<IEnumerable<T>> GetAllItemsAsync<T>() where T : BaseEntity;
         Task<T> AddItem<T>(T item) where T : BaseEntity;
         Task<T> GetItemById<T>(int i) where T : BaseEntity;
-        Task SaveAsync();
     }
 }

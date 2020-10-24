@@ -88,15 +88,15 @@ namespace HomeTask4.Cmd
                 await ShowRecipe(recipeId);
             }
         }
-        private async Task<List<RecipeBookCategory>> GetCategoriesById(int? Id)
+        private async Task<List<RecipeBookCategory>> GetCategoriesById(int? id)
         {
             var list = await controller.GetAllItemsAsync<RecipeBookCategory>();
-            return list.ToList().FindAll(category => category.ParentId == Id);
+            return list.ToList().FindAll(category => category.ParentId == id);
         }
-        private async Task<List<Recipe>> GetRecipesOfTheCategory(int? Id)
+        private async Task<List<Recipe>> GetRecipesOfTheCategory(int? id)
         {
             var list = await controller.GetAllItemsAsync<Recipe>();
-            return list.ToList().FindAll(recipe => recipe.RecipeBookCategoryId == Id);
+            return list.ToList().FindAll(recipe => recipe.RecipeBookCategoryId == id);
         }
         private async Task ShowRecipe(int recipeId)
         {
@@ -125,8 +125,7 @@ namespace HomeTask4.Cmd
             recipe.RecipeBookCategoryId = categoryId.Value;
             recipe.Ingredients = await EnterRecipeIngredients();
             recipe.Steps = EnterRecipeSteps();
-            controller.AddItem<Recipe>(recipe);
-            controller.SaveAsync().Wait();
+            await controller.AddItem<Recipe>(recipe);
             loopBreaker = true;
         }
         private async Task EnterRecipeCategory()
@@ -174,7 +173,7 @@ namespace HomeTask4.Cmd
                         loopBreaker = false;
                         break;
                     case ConsoleKey.A:
-                        AddFoodProduct();
+                        await AddFoodProduct();
                         break;
                     default:
                         if (int.TryParse(key.KeyChar.ToString(), out result))
@@ -196,13 +195,12 @@ namespace HomeTask4.Cmd
             loopBreaker = true;
             return ingredients;
         }
-        private void AddFoodProduct()
+        private async Task AddFoodProduct()
         {
             Console.WriteLine("\nEnter the name of product:");
             FoodProduct foodProduct = new FoodProduct();
             foodProduct.Name = Console.ReadLine();
-            controller.AddItem<FoodProduct>(foodProduct);
-            controller.SaveAsync().Wait();
+            await controller.AddItem<FoodProduct>(foodProduct);
         }
         private List<CookingStep> EnterRecipeSteps()
         {
