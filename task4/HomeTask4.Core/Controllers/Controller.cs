@@ -21,9 +21,9 @@ namespace HomeTask4.Core.Controllers
         }
         public async Task<T> AddItem<T>(T item) where T : BaseEntity
         {
-            Task<T> task = unitOfWork.Repository.AddItemAsync<T>(item);
+            T entity = await unitOfWork.Repository.AddItemAsync<T>(item);
             await SaveAsync();
-            return await task;
+            return entity;
         }
         public Task<T> GetItemById<T>(int i) where T: BaseEntity
         {
